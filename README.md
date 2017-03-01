@@ -2,7 +2,8 @@
 免费观看各大视频网站VIP资源的小脚本 (ง •̀_•́)ง
 
 ### 运行环境
-* Ruby >= 2.0 (如若没有可以下载 [Releases](https://github.com/ev3rs0u1/vip-get/releases) 版)
+* Gem: Nokogiri
+* Ruby: 2.x (如若没有可以下载 [Releases](https://github.com/ev3rs0u1/vip-get/releases) 版)
 
 ### 支持解析的列表
 * 优酷
