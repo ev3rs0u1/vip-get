@@ -14,4 +14,4 @@
 * A站 & B站
 
 ### 截图 
-![screenshot.png](screenshot.png)
+![screenshot](screenshot.gif)
