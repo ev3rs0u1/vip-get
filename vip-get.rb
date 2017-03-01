@@ -22,7 +22,7 @@ def human(size)
 end
 
 def usage_help
-  name = $0.split('/').last
+  name = $0.split('/')[-1].split('.')[0]
   puts "Usage: #{name} [page] [level=<bq, gq, cq, yh>] (default=bq)"
   puts "Example: #{name} http://www.iqiyi.com/v_19rrac4x2k.html gq"
 end
