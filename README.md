@@ -3,7 +3,7 @@
 
 ### 运行环境
 * Ruby: 2.x
-* Gem: nokogiri
+* Gem: nokogiri, terminal-table
 * (如若没有可以下载 [Releases](https://github.com/ev3rs0u1/vip-get/releases) 版)
 
 ### 支持解析的网站
