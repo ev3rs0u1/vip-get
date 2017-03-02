@@ -1,6 +1,7 @@
 # Created by ev3rs0u1 on 2017/3/2.
 require 'net/http'
 require 'nokogiri'
+require 'terminal-table'
 
 def http_get(url, params: {}, headers: {})
   uri = URI(url)
@@ -12,13 +13,23 @@ end
 def human(size)
   units = %w(B KB MB GB TB)
   e = (Math.log(size.to_i) / Math.log(1024)).floor
-  %(%.2f%s) % [(size.to_f / 1024 ** e), units[e]]
+  %(%.2f %s) % [(size.to_f / 1024 ** e), units[e]]
 end
 
-def usage_help
-  name = $0.split('/')[-1].split('.')[0]
-  puts "Usage: #{name} [page] [level=<bq, gq, cq, yh>] (default=bq)"
-  puts "Example: #{name} http://www.iqiyi.com/v_19rrac4x2k.html gq"
+def to_time(str)
+  Time.at(str.to_i).utc.strftime("%H:%M:%S")
+end
+
+def print_table(rows)
+  table = Terminal::Table.new
+  table.headings = [{ value: 'FILESIZE', colspan: 2 }, 'TIME']
+  table.rows = rows
+  table.style = {
+    border_x: '=',
+    alignment: :center,
+    all_separators: true
+  }
+  puts table
 end
 
 def vip_get(page, level)
@@ -27,12 +38,19 @@ def vip_get(page, level)
   res = http_get(api_url, params: params)
   raise Exception, 'parameter page invalid' if res.body.size < 50
   xml_doc = Nokogiri::XML(res.body)
-  mash =-> (x) { [x.css('file').text, x.css('size').text] }
-  list = xml_doc.css('video').map(&mash).sort_by(&:last).max_by(&:last)
-  puts "Url: [#{list[0]}]\nSize: [#{human(list[1])}]\n\n"
-  print "[Play it? (Y/n)]: "; opt = STDIN.gets
-  cmd = %(mpv.exe "#{list[0]}")
-  ['y', 'Y', "\n"].include?(opt) ? IO.popen(cmd) : raise(Exception, 'invalid option')
+  mash =-> (x) { [%("#{x.css('file').text}"), x.css('size').text, x.css('seconds').text] }
+  list = xml_doc.css('video').map(&mash)
+  rows = list.map.with_index { |(_, b, c), i| [i + 1, human(b), to_time(c)] }
+  print_table(rows)
+  cmd = %(mpv.exe #{list.map(&:first).join(' ')})
+  print "[Play all? (Y/n)]: "; opt = STDIN.gets
+  ['y', 'Y', "\n"].include?(opt) ? IO.popen(cmd) : raise(Interrupt)
+end
+
+def usage_help
+  name = $0.split('/')[-1].split('.')[0]
+  puts "Usage: #{name} [page] [level=<bq, gq, cq, yh>] (default=bq)"
+  puts "Example: #{name} http://www.iqiyi.com/v_19rrac4x2k.html gq"
 end
 
 def main
