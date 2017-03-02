@@ -11,9 +11,11 @@ def http_get(url, params: {}, headers: {})
 end
 
 def human(size)
+  isize = size.to_f
+  return 'FULL' if isize < 1
   units = %w(B KB MB GB TB)
-  e = (Math.log(size.to_i) / Math.log(1024)).floor
-  %(%.2f %s) % [(size.to_f / 1024 ** e), units[e]]
+  e = (Math.log(isize) / Math.log(1024)).floor
+  %(%.2f %s) % [(isize / 1024 ** e), units[e]]
 end
 
 def to_time(str)
@@ -60,7 +62,7 @@ def main
 rescue Interrupt
   puts 'EXIT!'
 rescue Exception => e
-  puts "Error: #{e.message}"
+  puts "Error: #{e}"
 end
 
 if __FILE__ == $0
