@@ -35,7 +35,7 @@ def print_table(rows)
 end
 
 def vip_get(page, level)
-  api_url = 'http://aikan-tv.com/url.php'
+  api_url = 'http://aikan-tv.com/cao.php'
   params = { xml: page, type: 'auto', hd: level }
   res = http_get(api_url, params: params)
   raise Exception, 'parameter page invalid' if res.body.size < 50
